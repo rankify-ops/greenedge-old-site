@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Uncategorized Archives - GreenEdge Systems - Hydronic Heating, Hot Water &amp; Solar Power Consultants</title>
+	<atom:link href="https://greenedgesystems.com.au/category/uncategorized/feed/" rel="self" type="application/rss+xml" />
+	<link>https://greenedgesystems.com.au/category/uncategorized/</link>
+	<description></description>
+	<lastBuildDate>Thu, 11 Jul 2024 00:47:58 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://i0.wp.com/greenedgesystems.com.au/wp-content/uploads/2024/07/Green-EDGE-systems-1.png?fit=32%2C32&#038;ssl=1</url>
+	<title>Uncategorized Archives - GreenEdge Systems - Hydronic Heating, Hot Water &amp; Solar Power Consultants</title>
+	<link>https://greenedgesystems.com.au/category/uncategorized/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">235013211</site>	<item>
+		<title>Hello World!</title>
+		<link>https://greenedgesystems.com.au/2024/07/11/hello-world/</link>
+					<comments>https://greenedgesystems.com.au/2024/07/11/hello-world/#respond</comments>
+		
+		<dc:creator><![CDATA[Gary Flood]]></dc:creator>
+		<pubDate>Thu, 11 Jul 2024 00:47:58 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://greenedgesystems.com.au/2024/07/11/hello-world/</guid>
+
+					<description><![CDATA[<p>Welcome to WordPress! This is your first post. Edit or delete it to take the first step in your blogging journey.</p>
+<p>The post <a href="https://greenedgesystems.com.au/2024/07/11/hello-world/">Hello World!</a> appeared first on <a href="https://greenedgesystems.com.au">GreenEdge Systems - Hydronic Heating, Hot Water &amp; Solar Power Consultants</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Welcome to WordPress! This is your first post. Edit or delete it to take the first step in your blogging journey.</p>
+<p>The post <a href="https://greenedgesystems.com.au/2024/07/11/hello-world/">Hello World!</a> appeared first on <a href="https://greenedgesystems.com.au">GreenEdge Systems - Hydronic Heating, Hot Water &amp; Solar Power Consultants</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://greenedgesystems.com.au/2024/07/11/hello-world/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">2</post-id>	</item>
+	</channel>
+</rss>
