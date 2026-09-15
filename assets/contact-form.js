@@ -5,7 +5,7 @@
  * Set your access key in ACCESS_KEY. Web3Forms handles submission + file upload.
  */
 (function () {
-  var ACCESS_KEY = ""; // <-- paste your Web3Forms access key here
+  var ACCESS_KEY = "ea1d39c2-f8c8-4bf6-b276-0ab0c3f0cb6e";
   var FALLBACK_PHONE = "";
   var FALLBACK_EMAIL = "info@greenedgesystems.com.au";
   var DISCOVERY_ID = "ge-discovery-modal";
