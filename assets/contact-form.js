@@ -31,12 +31,19 @@
     ".ge-modal .ge-check{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#333;cursor:pointer;line-height:1.3}",
     ".ge-modal .ge-check input{width:16px;height:16px;accent-color:#1f7a4c;cursor:pointer;margin:0}",
     ".ge-modal .ge-other-input{flex:1;min-width:180px;padding:6px 10px;border:1.5px solid #d5cfc2;border-radius:6px;font-size:14px}",
-    ".ge-modal .ge-upload{background:#f5f1e8;border:1.5px dashed #cfc7b5;border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:14px}",
+    ".ge-modal .ge-upload{background:#f5f1e8;border:1.5px dashed #cfc7b5;border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:background .15s ease, border-color .15s ease}",
+    ".ge-modal .ge-upload.drag-over{background:#dcf3e6;border-color:#1f7a4c;border-style:solid}",
     ".ge-modal .ge-upload-btn{background:#fff;border:1.5px solid #1f7a4c;color:#1f7a4c;padding:6px 16px;border-radius:5px;font-weight:600;font-size:13px;cursor:pointer;flex-shrink:0}",
     ".ge-modal .ge-upload-btn:hover{background:#f0faf5}",
     ".ge-modal .ge-upload input[type=file]{display:none}",
     ".ge-modal .ge-upload-hint{color:#666;font-size:13px;flex:1}",
-    ".ge-modal .ge-upload-name{color:#1f7a4c;font-weight:500;font-size:13px}",
+    ".ge-modal .ge-file-list{display:flex;flex-direction:column;gap:6px}",
+    ".ge-modal .ge-file-item{display:flex;align-items:center;gap:8px;background:#f0faf5;border:1px solid #dcf3e6;border-radius:5px;padding:6px 10px;font-size:13px;color:#143f2b}",
+    ".ge-modal .ge-file-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".ge-modal .ge-file-size{color:#8c7e63;font-size:11px;flex-shrink:0}",
+    ".ge-modal .ge-file-remove{background:transparent;border:0;cursor:pointer;color:#8c7e63;font-size:16px;padding:0 4px;line-height:1;flex-shrink:0}",
+    ".ge-modal .ge-file-remove:hover{color:#dc2626}",
+    ".ge-modal .ge-file-err{color:#dc2626;font-size:12px;margin-top:4px}",
     ".ge-modal .ge-hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}",
     ".ge-modal .ge-submit{width:100%;background:#1f7a4c;color:#fff;font-weight:600;font-size:15px;padding:13px;border:0;border-radius:8px;cursor:pointer;margin-top:8px;letter-spacing:.01em;transition:background .15s ease}",
     ".ge-modal .ge-submit:hover{background:#174d33}",
@@ -80,11 +87,12 @@
               '<label class="ge-check"><input type="checkbox" name="project_type" value="Domestic Hot Water"/>Domestic Hot Water</label>' +
             '</div></div>' +
           '<div class="ge-row"><label>Upload Plans</label>' +
-            '<div class="ge-upload">' +
+            '<div class="ge-upload" id="ge-drop-zone">' +
               '<label class="ge-upload-btn" for="ge-file-input">Upload</label>' +
-              '<input id="ge-file-input" type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.dwg,.doc,.docx"/>' +
+              '<input id="ge-file-input" type="file" name="attachment" multiple accept=".pdf,.jpg,.jpeg,.png,.dwg,.doc,.docx"/>' +
               '<span class="ge-upload-hint">or drag files here.</span>' +
-            '</div></div>' +
+            '</div>' +
+            '<div class="ge-file-list" style="margin-top:8px;display:none"></div></div>' +
           '<div class="ge-row"><label>Additional Information</label>' +
             '<textarea name="additional_info" rows="4" placeholder="Tell us anything else about your project..."></textarea></div>' +
           '<button type="submit" class="ge-submit">Book My Discovery Call</button>' +
@@ -144,6 +152,8 @@
     document.head.appendChild(s);
   }
 
+  var MAX_FILE_MB = 20;
+
   function buildModal(id, html, kind) {
     injectStyle();
     if (document.getElementById(id)) return document.getElementById(id);
@@ -156,21 +166,114 @@
     m.addEventListener("click", function (e) { if (e.target === m) closeModal(m); });
     var form = m.querySelector("form");
     form.addEventListener("submit", function (e) { onSubmit(e, m, kind); });
-    // File name display
+
+    // Multi-file upload w/ drag+drop
     var fileInput = m.querySelector('input[type=file]');
     if (fileInput) {
+      m._files = []; // authoritative list
+      var dropZone = m.querySelector("#ge-drop-zone") || fileInput.parentNode;
       fileInput.addEventListener("change", function () {
-        var hint = m.querySelector(".ge-upload-hint");
-        if (fileInput.files.length > 0) {
-          hint.className = "ge-upload-name";
-          hint.textContent = fileInput.files[0].name;
-        } else {
-          hint.className = "ge-upload-hint";
-          hint.textContent = "or drag files here.";
+        addFiles(m, fileInput.files);
+        fileInput.value = ""; // reset so same file can be re-added
+      });
+
+      ["dragenter", "dragover"].forEach(function (ev) {
+        dropZone.addEventListener(ev, function (e) {
+          e.preventDefault(); e.stopPropagation();
+          dropZone.classList.add("drag-over");
+        });
+      });
+      ["dragleave", "drop"].forEach(function (ev) {
+        dropZone.addEventListener(ev, function (e) {
+          e.preventDefault(); e.stopPropagation();
+          dropZone.classList.remove("drag-over");
+        });
+      });
+      dropZone.addEventListener("drop", function (e) {
+        if (e.dataTransfer && e.dataTransfer.files) {
+          addFiles(m, e.dataTransfer.files);
         }
       });
     }
     return m;
+  }
+
+  function fmtSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function addFiles(m, fileList) {
+    var listBox = m.querySelector(".ge-file-list");
+    var hint = m.querySelector(".ge-upload-hint");
+    var maxBytes = MAX_FILE_MB * 1024 * 1024;
+    var rejected = [];
+    for (var i = 0; i < fileList.length; i++) {
+      var f = fileList[i];
+      if (f.size > maxBytes) {
+        rejected.push(f.name + " (" + fmtSize(f.size) + ")");
+        continue;
+      }
+      m._files.push(f);
+    }
+    renderFiles(m);
+    if (rejected.length) {
+      var msg = "Too large (max " + MAX_FILE_MB + "MB): " + rejected.join(", ");
+      showFileError(m, msg);
+    } else {
+      showFileError(m, "");
+    }
+  }
+
+  function showFileError(m, msg) {
+    var listBox = m.querySelector(".ge-file-list");
+    var err = listBox.querySelector(".ge-file-err");
+    if (msg) {
+      if (!err) {
+        err = document.createElement("div");
+        err.className = "ge-file-err";
+        listBox.appendChild(err);
+      }
+      err.textContent = msg;
+      listBox.style.display = "flex";
+    } else if (err) {
+      err.remove();
+    }
+  }
+
+  function renderFiles(m) {
+    var listBox = m.querySelector(".ge-file-list");
+    var hint = m.querySelector(".ge-upload-hint");
+    // Clear existing items but keep error line
+    var err = listBox.querySelector(".ge-file-err");
+    listBox.innerHTML = "";
+    if (m._files.length === 0) {
+      listBox.style.display = "none";
+      hint.textContent = "or drag files here.";
+      hint.style.color = "";
+      if (err) listBox.appendChild(err);
+      return;
+    }
+    listBox.style.display = "flex";
+    hint.textContent = m._files.length + " file" + (m._files.length === 1 ? "" : "s") + " attached";
+    hint.style.color = "#1f7a4c";
+    m._files.forEach(function (f, idx) {
+      var row = document.createElement("div");
+      row.className = "ge-file-item";
+      row.innerHTML =
+        '<span class="ge-file-name"></span>' +
+        '<span class="ge-file-size"></span>' +
+        '<button type="button" class="ge-file-remove" aria-label="Remove">&times;</button>';
+      row.querySelector(".ge-file-name").textContent = f.name;
+      row.querySelector(".ge-file-size").textContent = fmtSize(f.size);
+      row.querySelector(".ge-file-remove").addEventListener("click", function () {
+        m._files.splice(idx, 1);
+        renderFiles(m);
+      });
+      listBox.appendChild(row);
+    });
+    if (err) listBox.appendChild(err);
   }
 
   function openModal(m) {
@@ -224,8 +327,7 @@
     errBox.style.display = "none";
 
     var data = collectData(form);
-    var file = form.querySelector('input[type=file]');
-    var fileToUpload = file && file.files.length > 0 ? file.files[0] : null;
+    var files = modal._files || [];
 
     if (!ACCESS_KEY) {
       errBox.textContent = "This form isn't connected yet — please email " + FALLBACK_EMAIL + ".";
@@ -239,14 +341,18 @@
 
     var payload;
     var headers;
-    if (fileToUpload) {
-      // multipart with file
+    if (files.length > 0) {
+      // multipart with one or more files
       var fd = new FormData();
       fd.append("access_key", ACCESS_KEY);
       fd.append("from_name", "greenedgesystems.com.au");
       fd.append("subject", subjectFor(kind, data));
       Object.keys(data).forEach(function (k) { fd.append(k, data[k] || ""); });
-      fd.append("attachment", fileToUpload);
+      files.forEach(function (f, i) {
+        // Send as attachment, attachment_2, attachment_3... (Web3Forms accepts multiple keys)
+        fd.append(i === 0 ? "attachment" : "attachment_" + (i + 1), f, f.name);
+      });
+      fd.append("attachment_count", String(files.length));
       fd.append("source_page", window.location.href);
       payload = fd;
       headers = { Accept: "application/json" };
@@ -267,6 +373,11 @@
         modal.querySelector(".ge-body").style.display = "none";
         modal.querySelector(".ge-ok").style.display = "block";
         form.reset();
+        modal._files = [];
+        var listBox = modal.querySelector(".ge-file-list");
+        if (listBox) { listBox.innerHTML = ""; listBox.style.display = "none"; }
+        var hint = modal.querySelector(".ge-upload-hint");
+        if (hint) { hint.textContent = "or drag files here."; hint.style.color = ""; }
       })
       .catch(function () {
         errBox.textContent = fallbackMsg();
