@@ -1,54 +1,117 @@
-/* GreenEdge contact modal — replaces old Cognito lightbox popups
- * Intercepts every .n2-lightbox-trigger (Get Started / Contact Us / etc.)
- * whose href points to mailto:info@greenedgesystems.com.au and opens
- * a proper form modal that submits to Web3Forms.
- * Set your access key in the ACCESS_KEY constant below.
+/* GreenEdge modals — replaces old Cognito lightbox popups
+ * Two modals:
+ *   - Discovery Call (Get Started / Request Discovery Call / Learn More etc.)
+ *   - Contact Us (only for buttons whose label is "Contact Us")
+ * Set your access key in ACCESS_KEY. Web3Forms handles submission + file upload.
  */
 (function () {
   var ACCESS_KEY = ""; // <-- paste your Web3Forms access key here
   var FALLBACK_PHONE = "";
   var FALLBACK_EMAIL = "info@greenedgesystems.com.au";
-  var MODAL_ID = "ge-contact-modal";
+  var DISCOVERY_ID = "ge-discovery-modal";
+  var CONTACT_ID = "ge-contact-modal";
 
   var CSS = [
-    "#" + MODAL_ID + "{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;background:rgba(10,36,24,.65);padding:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#143f2b}",
-    "#" + MODAL_ID + ".open{display:flex}",
-    "#" + MODAL_ID + " .ge-card{background:#fff;border-radius:18px;max-width:560px;width:100%;padding:32px 28px;box-shadow:0 25px 80px rgba(0,0,0,.35);max-height:92vh;overflow-y:auto;position:relative}",
-    "#" + MODAL_ID + " .ge-close{position:absolute;top:12px;right:14px;background:transparent;border:0;font-size:26px;line-height:1;cursor:pointer;color:#666;padding:6px 10px;border-radius:8px}",
-    "#" + MODAL_ID + " .ge-close:hover{background:#f3efe8;color:#143f2b}",
-    "#" + MODAL_ID + " h2{margin:0 0 6px 0;font-size:24px;font-weight:700;color:#143f2b;letter-spacing:-.01em}",
-    "#" + MODAL_ID + " .ge-sub{margin:0 0 22px 0;color:#6b5e47;font-size:14px;line-height:1.5}",
-    "#" + MODAL_ID + " label{display:block;font-size:11px;font-weight:600;color:#524835;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}",
-    "#" + MODAL_ID + " .ge-row{margin-bottom:14px}",
-    "#" + MODAL_ID + " .ge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}",
-    "@media (max-width:520px){#" + MODAL_ID + " .ge-grid{grid-template-columns:1fr}}",
-    "#" + MODAL_ID + " input,#" + MODAL_ID + " select,#" + MODAL_ID + " textarea{width:100%;box-sizing:border-box;padding:11px 13px;border:1.5px solid #e7dfd2;border-radius:10px;font-size:14px;font-family:inherit;color:#143f2b;background:#fff;transition:border-color .15s ease, box-shadow .15s ease}",
-    "#" + MODAL_ID + " input:focus,#" + MODAL_ID + " select:focus,#" + MODAL_ID + " textarea:focus{outline:none;border-color:#1f7a4c;box-shadow:0 0 0 3px rgba(31,122,76,.12)}",
-    "#" + MODAL_ID + " textarea{resize:vertical;min-height:96px}",
-    "#" + MODAL_ID + " .ge-hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}",
-    "#" + MODAL_ID + " .ge-submit{width:100%;background:#1f7a4c;color:#fff;font-weight:600;font-size:15px;padding:13px;border:0;border-radius:10px;cursor:pointer;margin-top:6px;letter-spacing:.01em;transition:background .15s ease}",
-    "#" + MODAL_ID + " .ge-submit:hover{background:#174d33}",
-    "#" + MODAL_ID + " .ge-submit:disabled{opacity:.5;cursor:not-allowed}",
-    "#" + MODAL_ID + " .ge-err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:12px}",
-    "#" + MODAL_ID + " .ge-ok{text-align:center;padding:24px 8px}",
-    "#" + MODAL_ID + " .ge-ok-badge{width:64px;height:64px;border-radius:50%;background:#dcf3e6;color:#1f7a4c;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:32px}",
-    "#" + MODAL_ID + " .ge-foot{text-align:center;color:#8c7e63;font-size:12px;margin-top:14px}",
+    ".ge-modal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;background:rgba(10,36,24,.65);padding:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#143f2b}",
+    ".ge-modal.open{display:flex}",
+    ".ge-modal .ge-card{background:#fff;border-radius:18px;max-width:640px;width:100%;padding:34px 30px 30px;box-shadow:0 25px 80px rgba(0,0,0,.35);max-height:92vh;overflow-y:auto;position:relative}",
+    ".ge-modal .ge-close{position:absolute;top:12px;right:14px;background:transparent;border:0;font-size:26px;line-height:1;cursor:pointer;color:#666;padding:6px 10px;border-radius:8px}",
+    ".ge-modal .ge-close:hover{background:#f3efe8;color:#143f2b}",
+    ".ge-modal h2{margin:0 0 22px 0;font-size:26px;font-weight:700;color:#143f2b;letter-spacing:-.01em;text-align:center}",
+    ".ge-modal .ge-sub{margin:-16px 0 22px 0;color:#6b5e47;font-size:14px;line-height:1.5;text-align:center}",
+    ".ge-modal label{display:block;font-size:13px;font-weight:700;color:#143f2b;margin-bottom:6px}",
+    ".ge-modal label .req{color:#dc2626;margin-left:3px}",
+    ".ge-modal .ge-row{margin-bottom:16px}",
+    ".ge-modal .ge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}",
+    "@media (max-width:520px){.ge-modal .ge-grid{grid-template-columns:1fr}}",
+    ".ge-modal input[type=text],.ge-modal input[type=email],.ge-modal input[type=tel],.ge-modal select,.ge-modal textarea{width:100%;box-sizing:border-box;padding:11px 13px;border:1.5px solid #d5cfc2;border-radius:6px;font-size:14px;font-family:inherit;color:#143f2b;background:#fff;transition:border-color .15s ease, box-shadow .15s ease}",
+    ".ge-modal input:focus,.ge-modal select:focus,.ge-modal textarea:focus{outline:none;border-color:#1f7a4c;box-shadow:0 0 0 3px rgba(31,122,76,.12)}",
+    ".ge-modal textarea{resize:vertical;min-height:90px}",
+    ".ge-modal .ge-checks{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:6px}",
+    ".ge-modal .ge-check{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#333;cursor:pointer;line-height:1.3}",
+    ".ge-modal .ge-check input{width:16px;height:16px;accent-color:#1f7a4c;cursor:pointer;margin:0}",
+    ".ge-modal .ge-other-input{flex:1;min-width:180px;padding:6px 10px;border:1.5px solid #d5cfc2;border-radius:6px;font-size:14px}",
+    ".ge-modal .ge-upload{background:#f5f1e8;border:1.5px dashed #cfc7b5;border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:14px}",
+    ".ge-modal .ge-upload-btn{background:#fff;border:1.5px solid #1f7a4c;color:#1f7a4c;padding:6px 16px;border-radius:5px;font-weight:600;font-size:13px;cursor:pointer;flex-shrink:0}",
+    ".ge-modal .ge-upload-btn:hover{background:#f0faf5}",
+    ".ge-modal .ge-upload input[type=file]{display:none}",
+    ".ge-modal .ge-upload-hint{color:#666;font-size:13px;flex:1}",
+    ".ge-modal .ge-upload-name{color:#1f7a4c;font-weight:500;font-size:13px}",
+    ".ge-modal .ge-hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}",
+    ".ge-modal .ge-submit{width:100%;background:#1f7a4c;color:#fff;font-weight:600;font-size:15px;padding:13px;border:0;border-radius:8px;cursor:pointer;margin-top:8px;letter-spacing:.01em;transition:background .15s ease}",
+    ".ge-modal .ge-submit:hover{background:#174d33}",
+    ".ge-modal .ge-submit:disabled{opacity:.5;cursor:not-allowed}",
+    ".ge-modal .ge-err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px}",
+    ".ge-modal .ge-ok{text-align:center;padding:24px 8px}",
+    ".ge-modal .ge-ok-badge{width:64px;height:64px;border-radius:50%;background:#dcf3e6;color:#1f7a4c;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:32px}",
+    ".ge-modal .ge-foot{text-align:center;color:#8c7e63;font-size:12px;margin-top:14px}",
   ].join("");
 
-  var FORM_HTML =
-    '<div class="ge-card" role="dialog" aria-modal="true" aria-labelledby="ge-title">' +
+  var DISCOVERY_HTML =
+    '<div class="ge-card" role="dialog" aria-modal="true" aria-labelledby="ge-discovery-title">' +
       '<button type="button" class="ge-close" aria-label="Close">&times;</button>' +
       '<div class="ge-body">' +
-        '<h2 id="ge-title">Contact GreenEdge</h2>' +
+        '<h2 id="ge-discovery-title">15 Minute Discovery Call</h2>' +
+        '<form id="ge-discovery-form" novalidate>' +
+          '<input class="ge-hp" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true"/>' +
+          '<div class="ge-err" style="display:none"></div>' +
+          '<div class="ge-row"><label>Name<span class="req">*</span></label>' +
+            '<div class="ge-grid" style="margin-bottom:0">' +
+              '<input required name="first_name" type="text" placeholder="First"/>' +
+              '<input required name="last_name" type="text" placeholder="Last"/>' +
+            '</div></div>' +
+          '<div class="ge-grid">' +
+            '<div><label>Email<span class="req">*</span></label><input required name="email" type="email"/></div>' +
+            '<div><label>Phone<span class="req">*</span></label><input required name="phone" type="tel"/></div>' +
+          '</div>' +
+          '<div class="ge-row"><label>Best time to call</label>' +
+            '<div class="ge-checks">' +
+              '<label class="ge-check"><input type="checkbox" name="best_time" value="Morning 8:30am - 12:00pm"/>Morning 8:30am - 12:00pm</label>' +
+              '<label class="ge-check"><input type="checkbox" name="best_time" value="Lunch 12:00pm - 1:00pm"/>Lunch 12:00pm - 1:00pm</label>' +
+              '<label class="ge-check"><input type="checkbox" name="best_time" value="Afternoon 1:00pm - 6:00pm"/>Afternoon 1:00pm - 6:00pm</label>' +
+              '<label class="ge-check" style="flex:1;min-width:220px"><input type="checkbox" id="ge-other-time-cb"/><input type="text" class="ge-other-input" name="best_time_other" placeholder="Other"/></label>' +
+            '</div></div>' +
+          '<div class="ge-row"><label>Project Type</label>' +
+            '<div class="ge-checks">' +
+              '<label class="ge-check"><input type="checkbox" name="project_type" value="Hydronic Heating"/>Hydronic Heating</label>' +
+              '<label class="ge-check"><input type="checkbox" name="project_type" value="Solar Power"/>Solar Power</label>' +
+              '<label class="ge-check"><input type="checkbox" name="project_type" value="Swimming Pool"/>Swimming Pool</label>' +
+              '<label class="ge-check"><input type="checkbox" name="project_type" value="Wood Fired Heating"/>Wood Fired Heating</label>' +
+              '<label class="ge-check"><input type="checkbox" name="project_type" value="Domestic Hot Water"/>Domestic Hot Water</label>' +
+            '</div></div>' +
+          '<div class="ge-row"><label>Upload Plans</label>' +
+            '<div class="ge-upload">' +
+              '<label class="ge-upload-btn" for="ge-file-input">Upload</label>' +
+              '<input id="ge-file-input" type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.dwg,.doc,.docx"/>' +
+              '<span class="ge-upload-hint">or drag files here.</span>' +
+            '</div></div>' +
+          '<div class="ge-row"><label>Additional Information</label>' +
+            '<textarea name="additional_info" rows="4" placeholder="Tell us anything else about your project..."></textarea></div>' +
+          '<button type="submit" class="ge-submit">Book My Discovery Call</button>' +
+        '</form>' +
+        '<div class="ge-foot">Free 15-minute call &middot; No obligation</div>' +
+      '</div>' +
+      '<div class="ge-ok" style="display:none">' +
+        '<div class="ge-ok-badge">&#10003;</div>' +
+        '<h2 style="margin-bottom:8px">Discovery call requested!</h2>' +
+        '<p class="ge-sub" style="margin-top:0">Thanks — Gary will come back to you within 24 hours to schedule your free 15-minute call.</p>' +
+      '</div>' +
+    '</div>';
+
+  var CONTACT_HTML =
+    '<div class="ge-card" role="dialog" aria-modal="true" aria-labelledby="ge-contact-title">' +
+      '<button type="button" class="ge-close" aria-label="Close">&times;</button>' +
+      '<div class="ge-body">' +
+        '<h2 id="ge-contact-title">Contact GreenEdge</h2>' +
         '<p class="ge-sub">Send us a message and we\'ll come straight back to you.</p>' +
-        '<form id="ge-form" novalidate>' +
+        '<form id="ge-contact-form" novalidate>' +
           '<input class="ge-hp" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true"/>' +
           '<div class="ge-err" style="display:none"></div>' +
           '<div class="ge-grid">' +
-            '<div><label>Name *</label><input required name="name" type="text" placeholder="Your full name"/></div>' +
-            '<div><label>Phone *</label><input required name="phone" type="tel" placeholder="04XX XXX XXX"/></div>' +
+            '<div><label>Name<span class="req">*</span></label><input required name="name" type="text"/></div>' +
+            '<div><label>Phone<span class="req">*</span></label><input required name="phone" type="tel"/></div>' +
           '</div>' +
-          '<div class="ge-row"><label>Email *</label><input required name="email" type="email" placeholder="you@example.com"/></div>' +
+          '<div class="ge-row"><label>Email<span class="req">*</span></label><input required name="email" type="email"/></div>' +
           '<div class="ge-row"><label>What can we help with?</label>' +
             '<select name="topic">' +
               '<option value="">Select a topic (optional)</option>' +
@@ -68,55 +131,65 @@
       '</div>' +
       '<div class="ge-ok" style="display:none">' +
         '<div class="ge-ok-badge">&#10003;</div>' +
-        '<h2>Message sent!</h2>' +
-        '<p class="ge-sub" style="margin-top:8px">Thanks — we\'ll come back to you within 24 hours.</p>' +
+        '<h2 style="margin-bottom:8px">Message sent!</h2>' +
+        '<p class="ge-sub" style="margin-top:0">Thanks — we\'ll come back to you within 24 hours.</p>' +
       '</div>' +
     '</div>';
 
-  var modal, form, errBox, okBox, bodyBox, submitBtn;
-
   function injectStyle() {
-    if (document.getElementById("ge-contact-style")) return;
+    if (document.getElementById("ge-modal-style")) return;
     var s = document.createElement("style");
-    s.id = "ge-contact-style";
+    s.id = "ge-modal-style";
     s.textContent = CSS;
     document.head.appendChild(s);
   }
 
-  function build() {
+  function buildModal(id, html, kind) {
     injectStyle();
-    modal = document.createElement("div");
-    modal.id = MODAL_ID;
-    modal.innerHTML = FORM_HTML;
-    document.body.appendChild(modal);
-    form = modal.querySelector("#ge-form");
-    errBox = modal.querySelector(".ge-err");
-    okBox = modal.querySelector(".ge-ok");
-    bodyBox = modal.querySelector(".ge-body");
-    submitBtn = modal.querySelector(".ge-submit");
-
-    modal.querySelector(".ge-close").addEventListener("click", close);
-    modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
-    form.addEventListener("submit", onSubmit);
+    if (document.getElementById(id)) return document.getElementById(id);
+    var m = document.createElement("div");
+    m.id = id;
+    m.className = "ge-modal";
+    m.innerHTML = html;
+    document.body.appendChild(m);
+    m.querySelector(".ge-close").addEventListener("click", function () { closeModal(m); });
+    m.addEventListener("click", function (e) { if (e.target === m) closeModal(m); });
+    var form = m.querySelector("form");
+    form.addEventListener("submit", function (e) { onSubmit(e, m, kind); });
+    // File name display
+    var fileInput = m.querySelector('input[type=file]');
+    if (fileInput) {
+      fileInput.addEventListener("change", function () {
+        var hint = m.querySelector(".ge-upload-hint");
+        if (fileInput.files.length > 0) {
+          hint.className = "ge-upload-name";
+          hint.textContent = fileInput.files[0].name;
+        } else {
+          hint.className = "ge-upload-hint";
+          hint.textContent = "or drag files here.";
+        }
+      });
+    }
+    return m;
   }
 
-  function open() {
-    if (!modal) build();
-    // reset for repeat opens
-    bodyBox.style.display = "";
-    okBox.style.display = "none";
-    errBox.style.display = "none";
-    modal.classList.add("open");
-    setTimeout(function(){ var n = form.querySelector('input[name="name"]'); if (n) n.focus(); }, 30);
+  function openModal(m) {
+    var body = m.querySelector(".ge-body");
+    var ok = m.querySelector(".ge-ok");
+    body.style.display = "";
+    ok.style.display = "none";
+    m.querySelector(".ge-err").style.display = "none";
+    m.classList.add("open");
+    setTimeout(function () {
+      var first = m.querySelector('input[name="first_name"], input[name="name"]');
+      if (first) first.focus();
+    }, 40);
   }
 
-  function close() { if (modal) modal.classList.remove("open"); }
+  function closeModal(m) { m.classList.remove("open"); }
 
-  function showError(msg) {
-    errBox.textContent = msg;
-    errBox.style.display = "block";
-  }
+  function openDiscovery() { openModal(buildModal(DISCOVERY_ID, DISCOVERY_HTML, "discovery")); }
+  function openContact() { openModal(buildModal(CONTACT_ID, CONTACT_HTML, "contact")); }
 
   function fallbackMsg() {
     var bits = [];
@@ -125,71 +198,116 @@
     return "Sorry — that didn't send. Please " + bits.join(" or ") + ".";
   }
 
-  function onSubmit(e) {
+  function collectData(form) {
+    var out = {};
+    var fd = new FormData(form);
+    // Collect multi-value checkboxes into arrays
+    fd.forEach(function (v, k) {
+      if (k === "attachment") return; // handled separately
+      if (out[k] === undefined) out[k] = v;
+      else if (Array.isArray(out[k])) out[k].push(v);
+      else out[k] = [out[k], v];
+    });
+    // Join arrays for readable email
+    Object.keys(out).forEach(function (k) {
+      if (Array.isArray(out[k])) out[k] = out[k].join(", ");
+    });
+    return out;
+  }
+
+  function onSubmit(e, modal, kind) {
     e.preventDefault();
+    var form = modal.querySelector("form");
+    var errBox = modal.querySelector(".ge-err");
+    var submitBtn = modal.querySelector(".ge-submit");
     if (form.querySelector('input[name="botcheck"]').value) return;
     errBox.style.display = "none";
 
-    var fd = new FormData(form);
-    var data = {};
-    fd.forEach(function (v, k) { data[k] = v; });
+    var data = collectData(form);
+    var file = form.querySelector('input[type=file]');
+    var fileToUpload = file && file.files.length > 0 ? file.files[0] : null;
 
     if (!ACCESS_KEY) {
-      showError("This form isn't connected yet — please email " + FALLBACK_EMAIL + ".");
+      errBox.textContent = "This form isn't connected yet — please email " + FALLBACK_EMAIL + ".";
+      errBox.style.display = "block";
       return;
     }
 
     submitBtn.disabled = true;
+    var origLabel = submitBtn.textContent;
     submitBtn.textContent = "Sending...";
 
-    var payload = {
-      access_key: ACCESS_KEY,
-      subject: "GreenEdge contact form: " + (data.topic || "General enquiry") + " — " + (data.name || ""),
-      from_name: "greenedgesystems.com.au",
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      topic: data.topic || "Not specified",
-      message: data.message || "—",
-      source_page: window.location.href,
-    };
+    var payload;
+    var headers;
+    if (fileToUpload) {
+      // multipart with file
+      var fd = new FormData();
+      fd.append("access_key", ACCESS_KEY);
+      fd.append("from_name", "greenedgesystems.com.au");
+      fd.append("subject", subjectFor(kind, data));
+      Object.keys(data).forEach(function (k) { fd.append(k, data[k] || ""); });
+      fd.append("attachment", fileToUpload);
+      fd.append("source_page", window.location.href);
+      payload = fd;
+      headers = { Accept: "application/json" };
+    } else {
+      payload = JSON.stringify(Object.assign({
+        access_key: ACCESS_KEY,
+        from_name: "greenedgesystems.com.au",
+        subject: subjectFor(kind, data),
+        source_page: window.location.href,
+      }, data));
+      headers = { "Content-Type": "application/json", Accept: "application/json" };
+    }
 
-    fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(payload),
-    })
+    fetch("https://api.web3forms.com/submit", { method: "POST", headers: headers, body: payload })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {
         if (!res.ok || !res.j || !res.j.success) throw new Error("failed");
-        bodyBox.style.display = "none";
-        okBox.style.display = "block";
+        modal.querySelector(".ge-body").style.display = "none";
+        modal.querySelector(".ge-ok").style.display = "block";
         form.reset();
       })
-      .catch(function () { showError(fallbackMsg()); })
+      .catch(function () {
+        errBox.textContent = fallbackMsg();
+        errBox.style.display = "block";
+      })
       .then(function () {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Send Message";
+        submitBtn.textContent = origLabel;
       });
   }
 
-  function isContactTrigger(a) {
-    if (!a || a.tagName !== "A") return false;
-    var href = a.getAttribute("href") || "";
-    if (href.indexOf("mailto:info@greenedgesystems") === 0) {
-      // only intercept ones that were the old Cognito popup buttons
-      if (a.classList && a.classList.contains("n2-lightbox-trigger")) return true;
+  function subjectFor(kind, d) {
+    var name = (d.first_name || d.name || "") + (d.last_name ? " " + d.last_name : "");
+    if (kind === "discovery") {
+      return "Discovery call request — " + name.trim() + (d.project_type ? " (" + d.project_type + ")" : "");
     }
-    return false;
+    return "Contact form — " + (d.topic || "General enquiry") + " — " + name.trim();
   }
 
+  function labelOf(a) {
+    return (a.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  function routeClick(a) {
+    var label = labelOf(a);
+    if (label.indexOf("contact") === 0 || label === "contact us") {
+      openContact();
+    } else {
+      // Get Started, Learn More, Request Discovery Call, etc.
+      openDiscovery();
+    }
+  }
+
+  // Prime already-parked links so href="mailto:" doesn't flash a chooser
   function wireLinks() {
     var all = document.querySelectorAll('a.n2-lightbox-trigger[href^="mailto:info@greenedgesystems"]');
     for (var i = 0; i < all.length; i++) {
       var a = all[i];
       if (a.dataset.geWired === "1") continue;
       a.dataset.geWired = "1";
-      a.setAttribute("href", "#contact");
+      a.setAttribute("href", "javascript:void(0)");
       a.setAttribute("role", "button");
     }
   }
@@ -198,9 +316,17 @@
     var a = e.target;
     while (a && a !== document && a.tagName !== "A") a = a.parentNode;
     if (!a || a === document) return;
-    if (isContactTrigger(a) || (a.getAttribute && a.getAttribute("href") === "#contact" && a.dataset && a.dataset.geWired === "1")) {
+    if (!a.classList || !a.classList.contains("n2-lightbox-trigger")) return;
+    var href = a.getAttribute("href") || "";
+    if (
+      href.indexOf("mailto:info@greenedgesystems") === 0 ||
+      href === "javascript:void(0)" ||
+      href === "#" ||
+      href === ""
+    ) {
       e.preventDefault();
-      open();
+      e.stopPropagation();
+      routeClick(a);
     }
   }, true);
 
@@ -210,5 +336,6 @@
     wireLinks();
   }
 
-  window.openGeContactForm = open;
+  window.openGeContactForm = openContact;
+  window.openGeDiscoveryForm = openDiscovery;
 })();
