@@ -179,8 +179,82 @@ jqueryParams.length&&$.each(jqueryParams,function(e,r){if("function"==typeof r){
   padding:0;
 }
 .veu-layout > .veu-body{padding-top:24px !important}
-.veu-body table{width:100%;max-width:100%}
-.veu-body .et_pb_text_inner{overflow-wrap:break-word}
+.veu-body .et_pb_text_inner{
+  overflow-wrap:break-word;
+  color:#292929;
+  font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;
+  font-size:17px;
+  line-height:1.65;
+}
+.veu-body .et_pb_text_inner h2{
+  font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;
+  font-size:24px;
+  font-weight:600;
+  line-height:1.25;
+  color:#292929;
+  margin:48px 0 14px;
+  padding:0;
+}
+.veu-body .et_pb_text_inner h3{
+  font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;
+  font-weight:600;
+  line-height:1.3;
+  color:#292929;
+  padding:0;
+}
+.veu-body .et_pb_text_inner p{margin:0 0 16px;padding:0}
+.veu-body .et_pb_text_inner a{color:#1890d7}
+.veu-body .facts,
+.veu-body .problems,
+.veu-body .steps,
+.veu-body .rebates,
+.veu-body .standards{list-style:none;margin:0;padding:0}
+.veu-body .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:8px 0 8px}
+.veu-body .facts li{background:#f6f8f7;border-radius:8px;padding:18px 20px;margin:0}
+.veu-body .facts strong{display:block;font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;font-weight:600;color:#0a5e2d;margin:0 0 6px}
+.veu-body .rebate-legend{display:flex;justify-content:space-between;gap:16px;margin:0 0 8px;font-size:14px;font-weight:600;color:#5c6460}
+.veu-body .rebates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:8px 0 16px}
+.veu-body .rebate{background:#f6f8f7;border-radius:10px;padding:20px 18px;border-top:4px solid #0a5e2d;min-width:0}
+.veu-body .rebate-kicker{display:block;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#5c6460;margin:0 0 8px}
+.veu-body .rebate-value{display:block;font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;font-size:28px;font-weight:700;line-height:1.15;color:#0a5e2d;margin:0}
+.veu-body .rebate-label{display:block;margin:0 0 10px;color:#292929}
+.veu-body .rebate-total{background:#0a5e2d}
+.veu-body .rebate-total .rebate-kicker,
+.veu-body .rebate-total .rebate-label{color:#e3efe7}
+.veu-body .rebate-total .rebate-value{color:#ffffff}
+.veu-body .fine{font-size:15px;color:#5c6460}
+.veu-body .deadline{border:2px solid #0a5e2d;border-radius:10px;padding:22px 24px;margin:8px 0 16px}
+.veu-body .deadline .date{font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;font-weight:700;font-size:26px;line-height:1.2;color:#0a5e2d;margin:0 0 8px}
+.veu-body .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s;margin:8px 0 20px}
+.veu-body .steps > li{counter-increment:s;background:#f6f8f7;border-radius:10px;padding:18px 18px 16px 18px;margin:0;min-width:0}
+.veu-body .steps > li::before{content:counter(s);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#0a5e2d;color:#fff;font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;font-weight:600;margin:0 0 10px}
+.veu-body .steps h3{font-size:18px;margin:0 0 8px}
+.veu-body .steps h3 span{font-weight:400;color:#5c6460}
+.veu-body .steps ul{list-style:disc;margin:8px 0 0;padding-left:18px}
+.veu-body .steps ul li{margin:0 0 6px}
+.veu-body .problems{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:8px 0 8px}
+.veu-body .problem{border-left:4px solid #0a5e2d;background:#f6f8f7;border-radius:0 8px 8px 0;padding:16px 18px;min-width:0}
+.veu-body .problem h3{font-size:18px;margin:0 0 6px}
+.veu-body .problem p{margin:0}
+.veu-body .standards{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.veu-body .standards li{background:#e8f2ec;color:#0a5e2d;font-family:Roboto,Helvetica,Arial,Lucida,sans-serif;font-weight:600;font-size:15px;padding:8px 14px;border-radius:999px;margin:0}
+.veu-body .closing{margin-top:48px;padding:32px 28px;background:#0a5e2d;color:#fff;border-radius:12px}
+.veu-body .closing h2{color:#fff;margin-top:0}
+.veu-body .closing p{color:#e3efe7}
+.veu-body .closing .contact{margin:16px 0 0;font-size:16px}
+.veu-body .closing .contact a{color:#fff}
+.veu-body .closing a.n2-style-e2896f0e30a801fb4fd241cb9ace9f37-heading{background:#fff !important;color:#0a5e2d !important}
+.veu-body .closing a.n2-style-e2896f0e30a801fb4fd241cb9ace9f37-heading:hover,
+.veu-body .closing a.n2-style-e2896f0e30a801fb4fd241cb9ace9f37-heading:focus,
+.veu-body .closing a.n2-style-e2896f0e30a801fb4fd241cb9ace9f37-heading:active{background:#e8f2ec !important;color:#0a5e2d !important}
+@media (max-width:900px){
+  .veu-body .rebates,.veu-body .steps{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .veu-body .facts,.veu-body .problems{grid-template-columns:1fr}
+  .veu-body .et_pb_text_inner{font-size:16px}
+  .veu-body .rebate-value{font-size:24px}
+}
 @media (max-width:1199px){
   .veu-hero{min-height:0}
   .veu-hero .et_pb_row{padding-top:60px !important}
@@ -498,37 +572,37 @@ jqueryParams.length&&$.each(jqueryParams,function(e,r){if("function"==typeof r){
 <p>Until now, homeowners have had to piece together rebates meant for other things, such as hot water heat pump rebates, reverse-cycle air conditioner incentives and federal STCs. The new hydronic activity is designed to fill that gap and help more Victorian households go all-electric and disconnect from gas.</p>
 <h2>What's happening</h2>
 <p>The Department of Energy, Environment and Climate Action (DEECA) is adding a dedicated hydronic space heating activity to the <a href="https://engage.vic.gov.au/hydronic-heating" target="_blank" rel="noopener">Victorian Energy Upgrades program</a>.</p>
-<ul>
-<li><strong>What it's for</strong><br>Encouraging households to replace ageing gas hydronic boilers with high-efficiency air-to-water heat pumps.</li>
-<li><strong>Where it's up to</strong><br>Public consultation closed on 22 May 2026. After strong support from industry, DEECA <a href="https://engage.vic.gov.au/download/document/48550" target="_blank" rel="noopener">published its response</a> and confirmed it will go ahead with the new activity.</li>
-<li><strong>Quality safeguards</strong><br>DEECA has recommended that the Essential Services Commission set competency requirements for both hydronic system designers and installers, so that only experienced practitioners carry out these upgrades.</li>
-<li><strong>What happens next</strong><br>The regulations and product specifications are being finalised. Industry expects the rebates to be available at point of sale in late 2026 or early 2027.</li>
+<ul class="facts">
+<li><strong>What it's for</strong>Encouraging households to replace ageing gas hydronic boilers with high-efficiency air-to-water heat pumps.</li>
+<li><strong>Where it's up to</strong>Public consultation closed on 22 May 2026. After strong support from industry, DEECA <a href="https://engage.vic.gov.au/download/document/48550" target="_blank" rel="noopener">published its response</a> and confirmed it will go ahead with the new activity.</li>
+<li><strong>Quality safeguards</strong>DEECA has recommended that the Essential Services Commission set competency requirements for both hydronic system designers and installers, so that only experienced practitioners carry out these upgrades.</li>
+<li><strong>What happens next</strong>The regulations and product specifications are being finalised. Industry expects the rebates to be available at point of sale in late 2026 or early 2027.</li>
 </ul>
 <h2>How much could you get?</h2>
 <p>The amounts haven't been finalised. Current industry estimates are:</p>
-<table>
-<thead><tr><th>Upgrade</th><th>Estimated rebate*</th></tr></thead>
-<tbody>
-<tr><td>Hydronic heat pump (based on size and suitability)</td><td>about $4,000</td></tr>
-<tr><td>Extra for a combination system that also heats your hot water</td><td>up to $3,000</td></tr>
-<tr><td>Possible total</td><td>up to $7,000</td></tr>
-</tbody>
-</table>
-<p>*These are estimates only. Final amounts and eligibility conditions will be set by the VEU program. A full heat load calculation will be needed to confirm your system is the right size.</p>
+<p class="rebate-legend"><span>Upgrade</span><span>Estimated rebate*</span></p>
+<div class="rebates">
+<div class="rebate"><span class="rebate-label">Hydronic heat pump (based on size and suitability)</span><span class="rebate-value">about $4,000</span></div>
+<div class="rebate"><span class="rebate-label">Extra for a combination system that also heats your hot water</span><span class="rebate-value">up to $3,000</span></div>
+<div class="rebate rebate-total"><span class="rebate-label">Possible total</span><span class="rebate-value">up to $7,000</span></div>
+</div>
+<p class="fine">*These are estimates only. Final amounts and eligibility conditions will be set by the VEU program. A full heat load calculation will be needed to confirm your system is the right size.</p>
 <p>That's a big contribution towards the cost of a new system.</p>
 <h2>Why timing matters</h2>
-<h3>1 March 2027</h3>
+<div class="deadline">
+<p class="date">1 March 2027</p>
 <p>Victoria's new gas rules start. From that date, a gas hot water system that reaches the end of its life must be replaced with an efficient electric alternative, and rental properties must also replace end-of-life gas heaters (conditions apply). If your hydronic boiler also heats your hot water, these rules may affect you.</p>
+</div>
 <p>Demand for qualified designers and installers is expected to rise sharply once the rebates start. Homes that already have their design and quotes ready will be first in line, and won't be forced into a rushed decision when an old boiler fails in the middle of winter.</p>
 <h2>How GreenEdge Systems helps you prepare</h2>
 <p>GreenEdge Systems is an <strong>independent consultancy</strong>. We work with homeowners, architects and builders. <strong>We don't sell products</strong>, so our recommendations aren't driven by commission. Every product we recommend must meet our strict criteria (<a href="../hydronic-heat-pumps/index.html">see our hydronic heat pump standards</a>).</p>
-<ol>
+<ol class="steps">
 <li>
 <h3>Free discovery call</h3>
 <p>We talk through your home, your current system and your goals, and explain how we work.</p>
 </li>
 <li>
-<h3>Project appraisal (around $350 for a typical home changeover)</h3>
+<h3>Project appraisal <span>(around $350 for a typical home changeover)</span></h3>
 <ul>
 <li>An assessment of the energy your current system uses, plus a full heat load calculation</li>
 <li>Recommendations for at least two accredited heat pump brands that suit your home</li>
@@ -544,26 +618,39 @@ jqueryParams.length&&$.each(jqueryParams,function(e,r){if("function"==typeof r){
 <p>Everyone works from the same plan, so there's no room for shortcuts or compromises.</p>
 <p><strong>Thinking about more upgrades?</strong> We can also plan solar, battery storage, EV chargers, rainwater harvesting and pool heating (extra fees apply), with specialist installers for each.</p>
 <h2>Common problems we see</h2>
+<div class="problems">
+<div class="problem">
 <h3>Sales pitches instead of advice</h3>
 <p>Commission-based salespeople push their own products, sometimes poor-quality ones, and promise install dates they can't keep. Many installations then miss winter altogether.</p>
+</div>
+<div class="problem">
 <h3>Noisy heat pumps</h3>
 <p>Loud units in suburban areas can lead to neighbour complaints and council action, sometimes forcing owners to move or limit their unit. <strong>We only recommend hydronic heat pumps with a sound pressure level of 59&nbsp;dB(A) or less at 1&nbsp;metre.</strong></p>
+</div>
+<div class="problem">
 <h3>The wrong refrigerant or flow temperature</h3>
 <p>We only recommend units that use natural refrigerants and can deliver water at up to <strong>75°C</strong>, which suits existing radiators.</p>
+</div>
+<div class="problem">
 <h3>Oversized systems</h3>
 <p>Australia has no standard for sizing hydronic radiators, so some salespeople apply European design conditions to Melbourne homes. The result is an oversized, overpriced system.</p>
+</div>
+</div>
 <p>The proposed VEU guidelines are a big step forward, but they still allow some lower-quality products. We won't recommend them, and our clients don't accept them.</p>
 <h2>A new generation of heat pumps is on the way</h2>
 <p>Several manufacturers are bringing new models to Australia. They're expected to be <strong>cheaper, smarter and more versatile</strong> than many units on the market today, with heating and cooling options for in-slab systems. To be recommended by GreenEdge Systems, a product must meet strict criteria in line with:</p>
-<ul>
+<ul class="standards">
 <li>UK MCS 007</li>
 <li>European ErP Directive</li>
 <li>EN 14825 performance testing</li>
 </ul>
+<section class="closing">
 <h2>Get ready before the rush</h2>
 <p>Have your upgrade planned, designed and quoted before the rebates open. Start with a free, no-obligation discovery call.</p>
 <div class="n2-ss-button-container n2-ss-item-content n2-ow n2-font-6a9c4e8167183bfc2fc79201820e8af6-link  n2-ss-nowrap n2-ss-button-container--non-full-width"><a class="n2-style-e2896f0e30a801fb4fd241cb9ace9f37-heading  n2-ow  n2-lightbox-trigger nolightbox no-lightbox"  role="button" data-privacy="0" href="mailto:info@greenedgesystems.com.au"><div><div>Book your free discovery call</div></div></a></div>
-<p>Or email <a href="mailto:info@greenedgesystems.com.au">info@greenedgesystems.com.au</a></p>
+<p class="contact">Or email <a href="mailto:info@greenedgesystems.com.au">info@greenedgesystems.com.au</a></p>
+</section>
+
 				</div>
 </div>
 </div>
