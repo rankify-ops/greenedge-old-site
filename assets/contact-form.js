@@ -7,7 +7,7 @@
 (function () {
   var ACCESS_KEY = "ea1d39c2-f8c8-4bf6-b276-0ab0c3f0cb6e";
   var FALLBACK_PHONE = "";
-  var FALLBACK_EMAIL = "info@greenedgesystems.com.au";
+  var FALLBACK_EMAIL = "gary@greenedgesystems.com.au";
   var DISCOVERY_ID = "ge-discovery-modal";
   var CONTACT_ID = "ge-contact-modal";
 
@@ -413,7 +413,7 @@
 
   // Prime already-parked links so href="mailto:" doesn't flash a chooser
   function wireLinks() {
-    var all = document.querySelectorAll('a.n2-lightbox-trigger[href^="mailto:info@greenedgesystems"]');
+    var all = document.querySelectorAll('a.n2-lightbox-trigger[href^="mailto:gary@greenedgesystems"]');
     for (var i = 0; i < all.length; i++) {
       var a = all[i];
       if (a.dataset.geWired === "1") continue;
@@ -430,7 +430,7 @@
     if (!a.classList || !a.classList.contains("n2-lightbox-trigger")) return;
     var href = a.getAttribute("href") || "";
     if (
-      href.indexOf("mailto:info@greenedgesystems") === 0 ||
+      href.indexOf("mailto:gary@greenedgesystems") === 0 ||
       href === "javascript:void(0)" ||
       href === "#" ||
       href === ""
